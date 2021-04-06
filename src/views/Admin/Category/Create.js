@@ -53,16 +53,16 @@ const Create = () => {
         })
             .then(res => res.json())
             .then((data) => {
-                console.log(data)
+                // console.log(data)
                 let notifOption = { place: 'br', message: data.meta.message, color: 'info', ref: notificationAlertRef }
                 notify(notifOption)
                 dispatch(setFormCategory('isLoading', false))
-                // history.push('/admin/category')
+                history.push('/admin/category')
             })
             .catch((err) => {
                 console.log(err)
                 let notifOption = { place: 'br', message: err, color: 'danger', ref: notificationAlertRef }
-                // notify(notifOption)
+                notify(notifOption)
                 dispatch(setFormCategory('isLoading', false))
             })
             .finally(() => {

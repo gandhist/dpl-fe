@@ -14,11 +14,9 @@ const Create = () => {
     const localAuth = JSON.parse(localStorage.getItem('p3sAuth'));
     const dispatch = useDispatch();
     const stateProperty = useSelector(state => state.PropertyReducer);
-    console.log(stateProperty)
     const history = useHistory();
     const { register, handleSubmit, errors } = useForm();
     const notificationAlertRef = useRef(null);
-    console.log(errors)
     // handle form onChange
     const handleOnChange = (e) => {
         let type = e.target.type;
@@ -37,7 +35,6 @@ const Create = () => {
         let formData = new FormData();
         delete stateProperty.isLoading;
         for (const key in stateProperty) {
-            console.log(`${key}`, stateProperty[key])
             // define form name if its a file
             if (key === 'images') {
                 if (typeof stateProperty[key] === 'object') {
@@ -58,11 +55,10 @@ const Create = () => {
         })
             .then(res => res.json())
             .then((data) => {
-                console.log(data)
                 let notifOption = { place: 'br', message: data.meta.message, color: 'info', ref: notificationAlertRef }
                 notify(notifOption)
                 dispatch(setFormProperty('isLoading', false))
-                // history.push('/admin/category')
+                history.push('/admin/property')
             })
             .catch((err) => {
                 console.log(err)

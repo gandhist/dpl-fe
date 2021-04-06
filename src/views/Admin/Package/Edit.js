@@ -4,7 +4,7 @@ import { useForm } from "react-hook-form";
 import { useDispatch, useSelector } from 'react-redux';
 import { useHistory, useParams } from 'react-router';
 import { notify } from 'utils/Notify';
-import { setFormPackage } from '../../../redux';
+import { setFormPackage, setisLoading } from '../../../redux';
 import NotificationAlert from "react-notification-alert";
 import { BASE_URL } from 'api';
 import Select from 'react-select';
@@ -13,14 +13,12 @@ const Create = () => {
     const localAuth = JSON.parse(localStorage.getItem('p3sAuth'));
     const dispatch = useDispatch();
     const ststatePackage = useSelector(state => state.PackageReducer);
-    console.log('ini state package', ststatePackage)
     const history = useHistory();
     const { id } = useParams();
     const { register, handleSubmit, errors } = useForm();
     const notificationAlertRef = useRef(null);
     const [lovCategory, setLovCategory] = useState([])
     const [lovProperties, setLovProperties] = useState([])
-
     // handle form onChange
     const handleOnChange = (e) => {
         let type = e.target.type;
@@ -50,7 +48,7 @@ const Create = () => {
         let formData = new FormData();
         delete ststatePackage.isLoading;
         for (const key in ststatePackage) {
-            console.log(`${key}`, ststatePackage[key])
+            // console.log(`${key}`, ststatePackage[key])
             // define form name if its a file
             if (key === 'images') {
                 if (typeof ststatePackage[key] === 'object') {
@@ -67,14 +65,15 @@ const Create = () => {
             }
             // formData.append(key, ststatePackage[key]);
         }
-        await fetch(`${BASE_URL}/admin/package`, {
+        formData.append('_method', 'PATCH');
+        await fetch(`${BASE_URL}/admin/package/${id}`, {
             method: 'POST',
             body: formData,
             headers: { 'Authorization': `Bearer ${localAuth.access_token}` },
         })
             .then(res => res.json())
             .then((data) => {
-                console.log(data)
+                // console.log(data)
                 let notifOption = { place: 'br', message: data.meta.message, color: 'info', ref: notificationAlertRef }
                 notify(notifOption)
                 dispatch(setFormPackage('isLoading', false))
@@ -114,7 +113,6 @@ const Create = () => {
         })
             .then(res => res.json())
             .then((data) => {
-                console.log(data)
                 const dtProp = data.data;
                 const lovProp = dtProp.map(val => {
                     return {
@@ -135,9 +133,12 @@ const Create = () => {
             headers: { 'Authorization': `Bearer ${localAuth.access_token}` }
         })
             .then(res => res.json())
-            .then((data) => {
-                dispatch(setFormPackage())
-                console.log(data)
+            .then((res) => {
+                Object.keys(res.data).map((el, i) => {
+                    // console.log(`obj ${i} ${res.data[el]}`)
+                    dispatch(setFormPackage(el, res.data[el]))
+                })
+                dispatch(setisLoading(false))
             })
             .catch((err) => {
                 console.log(err)
@@ -147,9 +148,26 @@ const Create = () => {
     // handle react select on change
     const handleSelectOnChange = (name, e) => {
         // e will return array object
-        console.log(`${name} :`, e)
+        // console.log(`${name} :`, e)
         // dispatch state redux
         dispatch(setFormPackage('properties', e))
+    }
+
+    // get default value
+    const getDefaulValueProperties = () => {
+        if(lovProperties.length >= 0 && ststatePackage.properties.length >= 0){
+            let s = [];
+            lovProperties.map((el,i) => {
+                let a = ststatePackage.properties.map((x) => x.value)
+                a.forEach((val) => {
+                  if(el.value == val){
+                    s.push(lovProperties[i])
+                  };
+                })
+                return s;
+              }).filter((el) => el > 0)
+        }
+        console.log('sdsds',s)
     }
 
     useEffect(() => {
@@ -177,7 +195,7 @@ const Create = () => {
                                             <Form.Group>
                                                 <label>Name</label>
                                                 <Form.Control
-                                                    defaultValue={ststatePackage.name}
+                                                    value={ststatePackage.name ?? ''}
                                                     placeholder="Name"
                                                     name="name"
                                                     type="text"
@@ -198,6 +216,7 @@ const Create = () => {
                                                 </label>
                                                 <Form.Control
                                                     placeholder="Price"
+                                                    value={ststatePackage.price ?? '' }
                                                     type="number"
                                                     name="price"
                                                     className={errors.price && 'is-invalid'}
@@ -215,12 +234,12 @@ const Create = () => {
                                         <Col className="pr-1" md="6">
                                             <Form.Group controlId="exampleForm.SelectCustom">
                                                 <Form.Label>Category</Form.Label>
-                                                <Form.Control as="select" name="id_category" custom onChange={e => handleOnChange(e)}>
+                                                <Form.Control value={ststatePackage.id_category != null ? ststatePackage.id_category : ''} as="select" name="id_category" custom onChange={e => handleOnChange(e)}>
                                                     {
                                                         lovCategory &&
                                                         lovCategory.map((el, index) => {
                                                             return (
-                                                                <option key={index} value={el.id} >{el.name}</option>
+                                                                <option  key={index} value={el.id} >{el.name}</option>
                                                             );
                                                         })
                                                     }
@@ -230,26 +249,31 @@ const Create = () => {
                                         <Col className="pr-1" md="6">
                                             <Form.Group>
                                                 <label>Images</label>
+                                                {
+                                                    ststatePackage.images != null ? 
+                                                    <a target="_blank" href={`http://127.0.0.1:5500/${ststatePackage.images}`} className="btn btn-success btn-xs" >View</a>
+                                                    : ''
+                                                }
                                                 <Form.Control
-                                                    defaultValue=""
-                                                    placeholder="Tagline the category"
+                                                    value=""
+                                                    placeholder="Images"
                                                     type="file"
                                                     name="images"
                                                     className={errors.images && 'is-invalid'}
                                                     onChange={e => handleOnChange(e)}
-                                                    ref={register({ required: true })}
                                                 ></Form.Control>
-                                                {errors.images?.type === "required" &&
+                                                {/* {errors.images?.type === "required" &&
                                                     <span className="invalid-feedback">
                                                         <strong>Images is required!</strong>
-                                                    </span>}
+                                                    </span>} */}
                                             </Form.Group>
                                         </Col>
                                     </Row>
                                     <Row>
                                         <Col md="12">
                                             <Form.Group controlId="exampleForm.SelectCustom">
-                                                <Form.Label>Select Property for this Package</Form.Label>
+                                                <Form.Label>Select Property for this Package
+                                                </Form.Label>
 
                                                 {/* <Form.Control as="select" name="id_category" custom onChange={e => handleOnChangeProperty(e)} >
                                                     {
@@ -263,7 +287,7 @@ const Create = () => {
                                                 </Form.Control> */}
                                                 <Select
                                                     // defaultValue={[options[2], options[0]]}
-                                                    defaultValue={[]}
+                                                    value={ststatePackage.properties.length == 0 ? [] : ststatePackage.properties}
                                                     isMulti
                                                     name="properties"
                                                     options={lovProperties}
@@ -281,7 +305,7 @@ const Create = () => {
                                                 <label>Description</label>
                                                 <Form.Control
                                                     cols="80"
-                                                    defaultValue=""
+                                                    value={ststatePackage.desc ?? ''}
                                                     placeholder="Here can be your description"
                                                     rows="4"
                                                     name="desc"

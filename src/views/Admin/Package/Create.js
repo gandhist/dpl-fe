@@ -13,7 +13,6 @@ const Create = () => {
     const localAuth = JSON.parse(localStorage.getItem('p3sAuth'));
     const dispatch = useDispatch();
     const ststatePackage = useSelector(state => state.PackageReducer);
-    console.log(ststatePackage)
     const history = useHistory();
     const { register, handleSubmit, errors } = useForm();
     const notificationAlertRef = useRef(null);
@@ -49,7 +48,6 @@ const Create = () => {
         let formData = new FormData();
         delete ststatePackage.isLoading;
         for (const key in ststatePackage) {
-            console.log(`${key}`, ststatePackage[key])
             // define form name if its a file
             if (key === 'images') {
                 if (typeof ststatePackage[key] === 'object') {
@@ -73,11 +71,10 @@ const Create = () => {
         })
             .then(res => res.json())
             .then((data) => {
-                console.log(data)
                 let notifOption = { place: 'br', message: data.meta.message, color: 'info', ref: notificationAlertRef }
                 notify(notifOption)
                 dispatch(setFormPackage('isLoading', false))
-                // history.push('/admin/category')
+                history.push('/admin/package')
             })
             .catch((err) => {
                 console.log(err)
@@ -113,7 +110,6 @@ const Create = () => {
         })
             .then(res => res.json())
             .then((data) => {
-                console.log(data)
                 const dtProp = data.data;
                 const lovProp = dtProp.map(val => {
                     return {
@@ -131,7 +127,7 @@ const Create = () => {
     // handle react select on change
     const handleSelectOnChange = (name, e) => {
         // e will return array object
-        console.log(`${name} :`, e)
+        // console.log(`${name} :`, e)
         // dispatch state redux
         dispatch(setFormPackage('properties', e))
     }

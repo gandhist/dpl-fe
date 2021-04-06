@@ -74,7 +74,6 @@ const List = () => {
         })
             .then(res => res.json())
             .then((data) => {
-                console.log(data)
                 setlistPackage(data.data)
                 dispatch(setisLoading(false))
             })

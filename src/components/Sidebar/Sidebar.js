@@ -46,8 +46,8 @@ function Sidebar({ color, image, routes }) {
           >
             <div className="logo-img mr-2">
               <img
-                src={require("assets/img/p3sm.png").default}
-                alt="..."
+                src={require("assets/img/ra.png").default}
+                alt="RA Organizer" className="rounded"
               />
             </div>
           </a>
@@ -70,7 +70,9 @@ function Sidebar({ color, image, routes }) {
                   >
                     <NavLink
                       onClick={() => {
-                        dispatch(setisLoading(true))
+                        if(location.pathname != prop.layout + prop.path){
+                          dispatch(setisLoading(true))
+                        }
                       }}
                       to={prop.layout + prop.path}
                       className="nav-link"

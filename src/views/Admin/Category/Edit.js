@@ -111,7 +111,7 @@ const Edit = () => {
                                             <Form.Group>
                                                 <label>Name</label>
                                                 <Form.Control
-                                                    defaultValue={stateCategory.name}
+                                                    value={stateCategory.name ?? ''}
                                                     placeholder="Name"
                                                     name="name"
                                                     type="text"
@@ -129,7 +129,7 @@ const Edit = () => {
                                             <Form.Group>
                                                 <label>Tagline</label>
                                                 <Form.Control
-                                                    defaultValue={stateCategory.tagline}
+                                                    value={stateCategory.tagline ?? ''}
                                                     placeholder="Tagline the category"
                                                     type="text"
                                                     name="tagline"
@@ -149,7 +149,7 @@ const Edit = () => {
                                                     Price
                                                 </label>
                                                 <Form.Control
-                                                    defaultValue={stateCategory.price}
+                                                    value={stateCategory.price ?? ''}
                                                     placeholder="Price"
                                                     type="number"
                                                     name="price"
@@ -169,7 +169,7 @@ const Edit = () => {
                                             <Form.Group>
                                                 <label>Min Price</label>
                                                 <Form.Control
-                                                    defaultValue={stateCategory.min_price}
+                                                    value={stateCategory.min_price ?? ''}
                                                     placeholder="Minimum Price"
                                                     type="number"
                                                     name="min_price"
@@ -187,7 +187,7 @@ const Edit = () => {
                                             <Form.Group>
                                                 <label>Max Price</label>
                                                 <Form.Control
-                                                    defaultValue={stateCategory.max_price}
+                                                    value={stateCategory.max_price ?? ''}
                                                     placeholder="Maximal price"
                                                     type="number"
                                                     name="max_price"
@@ -208,7 +208,7 @@ const Edit = () => {
                                                 <label>Description</label>
                                                 <Form.Control
                                                     cols="80"
-                                                    defaultValue={stateCategory.desc}
+                                                    value={stateCategory.desc ?? ''}
                                                     placeholder="Here can be your description"
                                                     rows="4"
                                                     name="desc"

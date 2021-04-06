@@ -14,11 +14,9 @@ const Edit = () => {
     const localAuth = JSON.parse(localStorage.getItem('p3sAuth'));
     const dispatch = useDispatch();
     const stateProperty = useSelector(state => state.PropertyReducer);
-    console.log(stateProperty)
     const history = useHistory();
     const { register, handleSubmit, errors } = useForm();
     const notificationAlertRef = useRef(null);
-    console.log(errors)
 
     // handle form onChange
     const handleOnChange = (e) => {
@@ -59,7 +57,6 @@ const Edit = () => {
         let formData = new FormData();
         delete stateProperty.isLoading;
         for (const key in stateProperty) {
-            console.log(`${key}`, stateProperty[key])
             // define form name if its a file
             if (key === 'images') {
                 if (typeof stateProperty[key] === 'object') {
@@ -80,7 +77,6 @@ const Edit = () => {
         })
             .then(res => res.json())
             .then((data) => {
-                console.log(data)
                 let notifOption = { place: 'br', message: data.meta.message, color: 'info', ref: notificationAlertRef }
                 notify(notifOption)
                 dispatch(setFormProperty('isLoading', false))
@@ -111,7 +107,7 @@ const Edit = () => {
                     <Col md="12">
                         <Card>
                             <Card.Header>
-                                <Card.Title as="h4">Edit Property {id} </Card.Title>
+                                <Card.Title as="h4">Edit Property </Card.Title>
                             </Card.Header>
                             <Card.Body>
                                 <Form onSubmit={handleSubmit(handleCreate)}>
@@ -120,7 +116,7 @@ const Edit = () => {
                                             <Form.Group>
                                                 <label>Name</label>
                                                 <Form.Control
-                                                    defaultValue={stateProperty.name}
+                                                    value={stateProperty.name ?? ''}
                                                     placeholder="Name"
                                                     name="name"
                                                     type="text"
@@ -140,7 +136,7 @@ const Edit = () => {
                                                     Price
                                                 </label>
                                                 <Form.Control
-                                                    defaultValue={stateProperty.price}
+                                                    value={stateProperty.price ?? ''}
                                                     placeholder="Price"
                                                     type="number"
                                                     name="price"
@@ -160,7 +156,7 @@ const Edit = () => {
                                             <Form.Group>
                                                 <label>Video Referensi</label>
                                                 <Form.Control
-                                                    defaultValue={stateProperty.video_ref}
+                                                    value={stateProperty.video_ref ?? ''}
                                                     placeholder="Link Preview Property"
                                                     type="text"
                                                     name="video_ref"
@@ -172,7 +168,7 @@ const Edit = () => {
                                             <Form.Group>
                                                 <label>Uom</label>
                                                 <Form.Control
-                                                    defaultValue={stateProperty.uom}
+                                                    value={stateProperty.uom ?? ''}
                                                     placeholder="Unit of Measurment"
                                                     type="text"
                                                     name="uom"
@@ -193,7 +189,7 @@ const Edit = () => {
                                                 <label>Description</label>
                                                 <Form.Control
                                                     cols="80"
-                                                    defaultValue={stateProperty.desc}
+                                                    value={stateProperty.desc ?? ''}
                                                     placeholder="Here can be your description"
                                                     rows="4"
                                                     name="desc"
@@ -207,8 +203,13 @@ const Edit = () => {
                                         <Col className="pr-1" md="6">
                                             <Form.Group>
                                                 <label>Images</label>
+                                                {
+                                                    stateProperty.images != null ? 
+                                                    <a target="_blank" href={`http://127.0.0.1:5500/${stateProperty.images}`} className="btn btn-success btn-xs" >View</a>
+                                                    : ''
+                                                }
                                                 <Form.Control
-                                                    defaultValue=""
+                                                    value=""
                                                     placeholder="Tagline the category"
                                                     type="file"
                                                     name="images"

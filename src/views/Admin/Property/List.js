@@ -72,7 +72,6 @@ const List = () => {
             .then((data) => {
                 setListProp(data.data)
                 dispatch(setisLoading(false))
-                console.log(data)
             })
             .catch((err) => {
                 console.log(err)
